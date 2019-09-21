@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <!-- Inspired by https://getbootstrap.com/docs/4.1/examples/dashboard/ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+    <style>
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 100;
+        padding: 48px 0 0; /* make space for the top navbar */
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+      }
+      
+      .nav-item {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      [role="main"] {
+          padding-top: 48px; /* make space for the top navbar */
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Company name</a>
+    </nav>
+
+    <div class="container fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-ligh sidebar">
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item"><button class="btn btn-primary btn-block">Button 1</button></li>
+            <li class="nav-item"><button class="btn btn-primary btn-block">Button 2</button></li>
+          </ul>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><p>Main container</p></main>
+      </div>
+    </div>
+  </body>
+</html>

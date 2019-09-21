@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Inspired by https://getbootstrap.com/docs/4.1/examples/dashboard/ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="agent.css">
+    <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
+    <title>Agent screen</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Company name</a>
+    </nav>
+
+    <div class="container fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-ligh sidebar">
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Customer phone number"
+                id="customer-number"
+              />
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-primary btn-block" id="connect">
+                Connect
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-primary btn-block">Mute</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-primary btn-block">Record</button>
+            </li>
+          </ul>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div id="media">
+            <div id="video-left"></div>
+            <div id="video-right"></div>
+            <div id="video-self"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="../lib/helpers.js"></script>
+    <script src="agent.js"></script>
+  </body>
+</html>
