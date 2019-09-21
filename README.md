@@ -1,3 +1,3 @@
 # Remote video viewer
 
-Prrof of concept
+Proof of concept for a remote video interaction (agent - client)
