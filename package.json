@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "description": "Proof of concept for a remote video controller",
   "scripts": {
-    "start": "node server"
+    "start": "node server",
+    "start-dev": "nodemon server"
   },
-
   "keywords": [
     "twilio",
     "video",
@@ -20,6 +20,12 @@
   "dependencies": {
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
-    "twilio": "^3.0.0-rc.16",
+    "twilio": "^3.0.0-rc.16"
   },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  },
+  "nodemonConfig": {
+    "ignore": ["public/*"]
+  }
 }
