@@ -16,10 +16,8 @@ function roomJoined(room) {
   document.getElementById('video-right').textContent =
     'Waiting for the customer to connect...';
 
-  // Override default trackAdded event in helpers
-  room.on('trackAdded', function(track, participant) {
+  function addRemoveVideotrack(track) {
     videoRight = !videoRight;
-    log(participant.identity + ' added track: ' + track.kind);
     let targetElement = videoRight
       ? document.getElementById('video-right')
       : document.getElementById('video-left');
@@ -27,6 +25,26 @@ function roomJoined(room) {
     targetElement.style['padding-top'] = 0;
     targetElement.style['border'] = 0;
     targetElement.appendChild(track.attach());
+  }
+
+  function updateDeviceOrientation(data) {
+    for (var key in data) {
+      document.getElementById(
+        'orientation-' + key
+      ).style.transform = `rotate(${data[key]}deg)`;
+    }
+  }
+
+  // Override default trackAdded event in helpers
+  room.on('trackAdded', function(track, participant) {
+    log(participant.identity + ' added track: ' + track.kind);
+    if (track.kind === 'video') {
+      addRemoveVideotrack(track);
+    } else if (track.kind === 'data') {
+      track.on('message', function(message) {
+        updateDeviceOrientation(JSON.parse(message).data);
+      });
+    }
   });
 
   // Change button's aspect

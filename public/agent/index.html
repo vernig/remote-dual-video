@@ -11,8 +11,8 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="sidebar.css">
-    <link rel="stylesheet" href="agent.css">
+    <link rel="stylesheet" href="sidebar.css" />
+    <link rel="stylesheet" href="agent.css" />
     <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
     <title>Agent screen</title>
   </head>
@@ -47,6 +47,12 @@
           </ul>
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div id="device-orientation">
+            <div style="text-align: center;">Device orientation</div>
+            <canvas class="orientation" width="100" height="100" id="orientation-alpha"></canvas>
+            <canvas class="orientation" width="100" height="100" id="orientation-beta"></canvas>
+            <canvas class="orientation" width="100" height="100" id="orientation-gamma"></canvas>
+          </div>
           <div id="media">
             <div id="video-left"></div>
             <div id="video-right"></div>
@@ -57,5 +63,23 @@
     </div>
     <script src="../lib/helpers.js"></script>
     <script src="agent.js"></script>
+    <script>
+      
+      function drawOrientationIndicator(target) {
+        canvasSize = 50
+        var ctx = target.getContext('2d');
+        ctx.fillStyle = 'grey';
+        ctx.beginPath();
+        ctx.moveTo(canvasSize, canvasSize);
+        ctx.arc(canvasSize, canvasSize, canvasSize, -0.2, 0.2);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      drawOrientationIndicator(document.getElementById('orientation-alpha'))
+      drawOrientationIndicator(document.getElementById('orientation-beta'))
+      drawOrientationIndicator(document.getElementById('orientation-gamma'))
+
+    </script>
   </body>
 </html>
