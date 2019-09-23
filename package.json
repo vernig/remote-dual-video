@@ -26,6 +26,8 @@
     "nodemon": "^1.19.2"
   },
   "nodemonConfig": {
-    "ignore": ["public/*"]
+    "ignore": [
+      "public/*"
+    ]
   }
 }
