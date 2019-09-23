@@ -78,3 +78,8 @@
   width: 5rem;
   height: 5rem;
 }
+
+.update-ui.default-hidden {
+  /* All the update-ui controls starts hidden */
+  display: none;
+}

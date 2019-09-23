@@ -1,9 +1,37 @@
 const Video = Twilio.Video;
 const ROOM_NAME = 'iInsurance';
 var videoRight = false;
+var videoRoom;
+
+function updateUI(status) {
+  Array.from(document.getElementsByClassName('update-ui')).forEach(element => {
+    element.classList.contains('show-' + status)
+      ? (element.style.display = 'block')
+      : (element.style.display = 'none');
+  });
+
+  switch (status) {
+    case 'connecting':
+      // Change connect button's aspect
+      connectButton = document.getElementById('connect');
+      connectButton.parentElement.style.display = 'block';
+      connectButton.classList.add('btn-secondary');
+      connectButton.disabled = true;
+      connectButton.textContent = 'Connecting...';
+      break;
+    case 'connected':
+      // Change connect button's aspect
+      connectButton = document.getElementById('connect');
+      connectButton.classList.remove('btn-secondary');
+      connectButton.disabled = false;
+      connectButton.textContent = 'Connect';
+      break;
+  }
+}
 
 function roomJoined(room) {
   console.log('Connected to room');
+  videoRoom = room;
   initRoomEvents(room);
 
   let selfVideo = document.getElementById('video-self');
@@ -47,19 +75,10 @@ function roomJoined(room) {
     }
   });
 
-  // Change button's aspect
-  connectButton = document.getElementById('connect');
-  connectButton.classList.disabled = false;
-  connectButton.classList.add('btn-danger');
-  connectButton.textContent = 'Disconnect';
+  updateUI('connected');
 }
 
 document.getElementById('connect').onclick = async function() {
-  // Change button's aspect
-  event.target.classList.add('btn-secondary');
-  event.target.classList.disabled = true;
-  event.target.textContent = 'Connecting...';
-
   // Send text message
   fetch('/invite', {
     method: 'post',
@@ -84,4 +103,10 @@ document.getElementById('connect').onclick = async function() {
   Video.connect(token.token, connectOptions).then(roomJoined, function(error) {
     log('Could not connect to Twilio: ' + error.message);
   });
+  updateUI('connecting');
+};
+
+document.getElementById('disconnect').onclick = function() {
+  videoRoom.disconnect();
+  updateUI('disconnected');
 };
