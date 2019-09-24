@@ -22,7 +22,7 @@ function attachParticipantTracks(participant, container) {
 // Detach the Tracks from the DOM.
 function detachTracks(tracks) {
   tracks.forEach(function(track) {
-    if (track) {
+    if (track.detach) {
       track.detach().forEach(function(detachedElement) {
         detachedElement.remove();
       });
@@ -41,13 +41,6 @@ function initRoomEvents(room) {
   room.on('participantConnected', function(participant) {
     log("Joining: '" + participant.identity + "'");
   });
-
-  // When a Participant adds a Track, attach it to the DOM.
-  // room.on('trackAdded', function(track, participant) {
-  //   log(participant.identity + ' added track: ' + track.kind);
-  //   var previewContainer = document.getElementById('remote-media');
-  //   attachTracks([track], previewContainer);
-  // });
 
   // When a Participant removes a Track, detach it from the DOM.
   room.on('trackRemoved', function(track, participant) {
