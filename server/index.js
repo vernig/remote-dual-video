@@ -58,6 +58,21 @@ app.get('/token', function(request, response) {
   });
 });
 
+app.post('/create-room', async function(request, response) {
+  let existingRooms = await client.video.rooms.list({uniqueName: request.body.name})
+  if (existingRooms.length > 0) {
+    // Let's update the room status to complete
+    console.log('Room existing. Set to complete')
+    await client.video.rooms(existingRooms[0].sid).update({status: 'completed'})
+  }
+  let newRoom = await client.video.rooms.create({
+    recordParticipantsOnConnect: request.body.recording === 'true',
+    type: 'group',
+    uniqueName: request.body.name
+  })
+  response.send(newRoom.uniqueName)
+});
+
 app.post('/invite', function(request, response) {
   client.messages
     .create({
