@@ -13,3 +13,21 @@ This demo is using:
   * Create a room (with and without recording) 
   * Stream both videos from the mobile phone to the desktop 
   * Use the Video Chat Data track to share mobile phone orientation data
+
+# Key procedures
+## Acquire both cameras on the mobile: 
+In order to acquire both camera, ` navigator.mediaDevices.enumerateDevices()` is used to enumerate all the devices. For each of the video devices, a new LocalVideoTrack is created using:
+```javascript
+Video.createLocalVideoTrack({ deviceId: inputDeviceInfo.deviceId }) 
+```
+and added to an array (i.e. `availableLocalVideoTracks`). The array is then used in the options for the `Video.connect()` call:
+
+```javascript
+connectOptions = {
+  name: roomName,
+  tracks: availableLocalVideoTracks
+};
+Video.connect(token.token, connectOptions)
+```
+
+See more in [client.js](https://github.com/vernig/remote-video/blob/master/public/client/client.js)
