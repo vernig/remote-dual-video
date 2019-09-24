@@ -2,6 +2,7 @@ const Video = Twilio.Video;
 var urlParams = new URLSearchParams(window.location.search);
 localTracks = [];
 var clientToken;
+var localVideoTracks;
 var localDataTrack;
 
 // This is an example of how to create a mediaStreamTracks array from all video sources
@@ -54,16 +55,17 @@ var localDataTrack;
 // This is a _simplified_ version of generating as many local video tracks
 // as available devices. For a different approach to that see the gist above
 function getAvailableLocalVideoTracks() {
-  return navigator.mediaDevices.enumerateDevices()
-  .then(inputDeviceInfos => {
-    let promises = [] 
-     inputDeviceInfos.forEach(inputDeviceInfo => {
-       if (inputDeviceInfo.kind == 'videoinput') {
-        promises.push(Video.createLocalVideoTrack({deviceId: inputDeviceInfo.deviceId}))
-       }
-     })
-     return Promise.all(promises)
-  })
+  return navigator.mediaDevices.enumerateDevices().then(inputDeviceInfos => {
+    let promises = [];
+    inputDeviceInfos.forEach(inputDeviceInfo => {
+      if (inputDeviceInfo.kind == 'videoinput') {
+        promises.push(
+          Video.createLocalVideoTrack({ deviceId: inputDeviceInfo.deviceId })
+        );
+      }
+    });
+    return Promise.all(promises);
+  });
 }
 
 function createDataTrack(room) {
@@ -72,15 +74,26 @@ function createDataTrack(room) {
 }
 
 function roomJoined(room) {
-  console.log(`${room.room}`);
   initRoomEvents(room);
   createDataTrack(room);
+  document
+    .getElementById('local-video')
+    .appendChild(localVideoTracks[1].attach());
+  document.getElementById('confirm-screen').style.display = 'none';
+  document.getElementById('call-screen').style.display = 'block';
+
+  document.getElementById('disconnect').onclick = function() {
+    room.disconnect();
+    document.getElementById('confirm-screen').style.display = 'block';
+    document.getElementById('call-screen').style.display = 'none';
+  };
 }
 
 document.getElementById('connect').onclick = function(event) {
   fetchToken().then(token => {
     clientToken = token;
     getAvailableLocalVideoTracks().then(availableLocalVideoTracks => {
+      localVideoTracks = availableLocalVideoTracks;
       connectOptions = {
         name: urlParams.get('room'),
         // It's a demo, we don't want an echo
@@ -93,7 +106,7 @@ document.getElementById('connect').onclick = function(event) {
       ) {
         log('Could not connect to Twilio: ' + error.message);
       });
-    })
+    });
   });
 };
 
