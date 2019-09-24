@@ -31,3 +31,66 @@ Video.connect(token.token, connectOptions)
 ```
 
 See more in [client.js](https://github.com/vernig/remote-video/blob/master/public/client/client.js)
+
+## Recordings
+
+The Javascript Video SDK doesn't include any API for creating the room. When the `Video.connect()` is used an _ad-hoc_ room is created and it's using the default settings from the room defined in the Twilio console. In order to set the recording option for the room, this is created on the [server](https://github.com/vernig/remote-video/blob/master/server/index.js) using the option `recordParticipantsOnConnect` in `client.video.rooms.create()`. Also, before creating a room, the server is checking if the room exists already, and if it does, the old room status is set to `completed`
+
+```javascript
+let existingRooms = await client.video.rooms.list({uniqueName: request.body.name})
+  if (existingRooms.length > 0) {
+    await client.video.rooms(existingRooms[0].sid).update({status: 'completed'})
+  }
+  let newRoom = await client.video.rooms.create({
+    recordParticipantsOnConnect: recordingOption,
+    type: 'group',
+    uniqueName: roomName
+  })
+ ```
+ 
+ ## Mobile orientation data 
+ 
+After the room is joined, the client creates and publishes a new data track:
+
+```javascript
+function createDataTrack(room) {
+  localDataTrack = new Video.LocalDataTrack();
+  room.localParticipant.publishTrack(localDataTrack);
+}
+```
+And then the `window.ondeviceorientation` event is used to send orientation data to the other peer (i.e. the desktop app):
+
+```javascript
+window.ondeviceorientation = function(event) {
+  if (localDataTrack) {
+    localDataTrack.send(
+      `{"kind": "orientation", "data": {"alpha": ${event.alpha}, "beta": ${event.beta}, "gamma": ${event.gamma}}}`
+    );
+  }
+};
+```
+
+## Disconnect from a room
+ 
+It's very important to note that disconnecting from a room is not enough to stop capturing the video from the camera. Two things needs to be done for that: 
+* Stop the track
+* Detach the track from any DOM element it was attached
+
+This is implemented in the [helper.js](https://github.com/vernig/remote-video/blob/master/public/lib/helpers.js) (since it's common to both client and server) in the handling of the room `disconnect` event:
+
+```
+room.on('disconnected', function(room, error) {
+    room.localParticipant.tracks.forEach(function(track) {
+      if (track.stop) {
+        track.stop();
+      }
+      if (track.detach) {
+        track.detach().forEach(detachedElement => {
+          if (detachedElement) {
+            detachedElement.remove();
+          }
+        });
+      }
+    });
+ ```
+ Note how the existance of both `stop` and `detach` method are checked before using them. Some of the tracks (e.g. data track) do not have these methods. 
