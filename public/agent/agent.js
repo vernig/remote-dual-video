@@ -1,5 +1,4 @@
 const Video = Twilio.Video;
-const ROOM_NAME = 'iInsurance';
 var videoRight = false;
 var videoRoom;
 
@@ -30,7 +29,12 @@ function updateUI(status) {
 }
 
 function roomJoined(room) {
-  console.log('Connected to room');
+  console.log('Connected to room ' + room.sid);
+  // Send text message
+  fetchJson('/invite', {
+    to: document.getElementById('customer-number').value,
+    url: `https://${window.location.hostname}/client/?room=${encodeURIComponent(room.name)}`
+  });
   videoRoom = room;
   initRoomEvents(room);
 
@@ -78,35 +82,64 @@ function roomJoined(room) {
   updateUI('connected');
 }
 
-document.getElementById('connect').onclick = async function() {
-  // Send text message
-  fetch('/invite', {
+function fetchJson(url, body) {
+  return fetch(url, {
     method: 'post',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      to: document.getElementById('customer-number').value,
-      url: `https://${window.location.hostname}/client/?room=${ROOM_NAME}`
-    })
-  });
+    body: JSON.stringify(body)
+  }).then(response => response.text());
+}
 
-  // Create / Join Room
+document.getElementById('connect').onclick = async function() {
+  if (!document.getElementById('customer-number').value) {
+    alert('You need to specify the customer phone number');
+    return;
+  }
+  let customerNumber = document.getElementById('customer-number').value;
+  // Get a token
   let token = await fetchToken();
-  var connectOptions = {
-    name: ROOM_NAME,
-    video: true,
-    audio: false
-    // logLevel: 'debug'
-  };
-  Video.connect(token.token, connectOptions).then(roomJoined, function(error) {
-    log('Could not connect to Twilio: ' + error.message);
+  // Create a room
+  let roomName = await fetchJson('/create-room', {
+    recording: document.getElementById('recording').attributes[
+      'data-toggle'
+    ].value,
+    name: customerNumber
   });
-  updateUI('connecting');
+  if (roomName) {
+    // Create the Video and join the room
+    var connectOptions = {
+      name: roomName,
+      video: true,
+      audio: false
+    };
+    Video.connect(token.token, connectOptions).then(roomJoined, function(
+      error
+    ) {
+      log('Could not connect to Twilio: ' + error.message);
+    });
+    updateUI('connecting');
+  }
 };
 
 document.getElementById('disconnect').onclick = function() {
   videoRoom.disconnect();
   updateUI('disconnected');
+};
+
+document.getElementById('recording').onclick = function(event) {
+  let button = event.target;
+  let recordingToggle = button.attributes['data-toggle'].value === 'true';
+  if (recordingToggle) {
+    button.classList.add('btn-secondary');
+    button.classList.remove('btn-primary');
+    button.textContent = 'Recording off';
+  } else {
+    button.classList.add('btn-primary');
+    button.classList.remove('btn-secondary');
+    button.textContent = 'Recording on';
+  }
+  button.attributes['data-toggle'].value = (!recordingToggle).toString();
 };
