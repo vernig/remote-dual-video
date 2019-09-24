@@ -48,7 +48,7 @@ function roomJoined(room) {
   document.getElementById('video-right').textContent =
     'Waiting for the customer to connect...';
 
-  function addRemoveVideotrack(track) {
+  function addRemoteVideotrack(track) {
     videoRight = !videoRight;
     let targetElement = videoRight
       ? document.getElementById('video-right')
@@ -67,17 +67,21 @@ function roomJoined(room) {
     }
   }
 
-  // Override default trackAdded event in helpers
   room.on('trackAdded', function(track, participant) {
     log(participant.identity + ' added track: ' + track.kind);
     if (track.kind === 'video') {
-      addRemoveVideotrack(track);
+      addRemoteVideotrack(track);
     } else if (track.kind === 'data') {
       track.on('message', function(message) {
         updateDeviceOrientation(JSON.parse(message).data);
       });
     }
   });
+
+  room.on('participantDisconnected', function(participant) {
+    document.getElementById('video-left').style['border'] = "1px solid"
+    document.getElementById('video-right').style['border'] = "1px solid"
+  })
 
   updateUI('connected');
 }
