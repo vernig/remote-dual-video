@@ -22,9 +22,11 @@ function attachParticipantTracks(participant, container) {
 // Detach the Tracks from the DOM.
 function detachTracks(tracks) {
   tracks.forEach(function(track) {
-    track.detach().forEach(function(detachedElement) {
-      detachedElement.remove();
-    });
+    if (track) {
+      track.detach().forEach(function(detachedElement) {
+        detachedElement.remove();
+      });
+    }
   });
 }
 
@@ -58,5 +60,24 @@ function initRoomEvents(room) {
     log("Participant '" + participant.identity + "' left the room");
     detachParticipantTracks(participant);
   });
+
+  room.on('disconnected', function(room, error) {
+    if (error) {
+      console.log('Unexpectedly disconnected:', error);
+    }
+    room.localParticipant.tracks.forEach(function(track) {
+      if (track.stop) {
+        track.stop();
+      }
+      if (track.detach) {
+        track.detach().forEach(detachedElement => {
+          if (detachedElement) {
+            detachedElement.remove();
+          }
+        });
+      }
+    });
+  });
 }
+
 
