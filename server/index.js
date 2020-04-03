@@ -79,7 +79,7 @@ app.post('/invite', function(request, response) {
       body:
         'Please use the following link to connect to your agent: ' +
         request.body.url,
-      from: '+447723560210',
+      from: process.env.FROM,
       to: request.body.to
     })
     .then(message => {
