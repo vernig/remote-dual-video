@@ -14,6 +14,26 @@ This demo is using:
   * Stream both videos from the mobile phone to the desktop 
   * Use the Video Chat Data track to share mobile phone orientation data
 
+# Quick start 
+* Clone the repo
+```
+git clone https://github.com/vernig/remote-dual-video.git
+```
+* Install dependencies 
+```
+npm install
+```
+* Copy the `.env.template` into `.env` and fill in the required information: 
+  * `TWILIO_ACCOUNT_SID`: your Twilio account SID
+  * `TWILIO_ACCOUNT_SECRET`: your Twilio auth token
+  * `TWILIO_API_KEY`: A new or existing Twilio API key. You can generate a new one [here](https://www.twilio.com/console/video/project/api-keys)
+  * `TWILIO_API_SECRET`: The secret of the API key `TWILIO_API_KEY`
+  * `FROM`: The from number used to send SMS to the remote client with the room info
+* Start the project:
+```
+npm start 
+``` 
+
 # Key procedures
 ## Acquire both cameras on the mobile: 
 In order to acquire both camera, ` navigator.mediaDevices.enumerateDevices()` is used to enumerate all the devices. For each of the video devices, a new LocalVideoTrack is created using:
